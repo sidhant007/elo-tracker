@@ -1,8 +1,8 @@
 // src/components/JoinRoom.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { TextField, Button, Container, List, ListItem } from '@mui/material';
+import { TextField, Button, Container } from '@mui/material';
 import './Error.css';
 
 function JoinRoom() {
