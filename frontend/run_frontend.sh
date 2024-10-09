@@ -1,3 +1,3 @@
 set NODE_OPTIONS=--openssl-legacy-provider
-export BACKEND_API_URL=''
+export REACT_APP_BASE_URL=''
 npm start

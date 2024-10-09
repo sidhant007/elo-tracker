@@ -6,7 +6,7 @@ import { TextField, Button, Container } from '@mui/material';
 import './Error.css';
 
 function LeaveRoom() {
-  const apiBaseUrl = process.env.BACKEND_API_URL;
+  const apiBaseUrl = process.env.REACT_APP_BASE_URL || '';
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 

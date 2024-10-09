@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import './Error.css';
 
 function Rooms() {
-  const apiBaseUrl = process.env.BACKEND_API_URL;
+  const apiBaseUrl = process.env.REACT_APP_BASE_URL || '';
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
