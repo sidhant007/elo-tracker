@@ -10,7 +10,7 @@ services:
     
   - type: web
     runtime: static
-    name: react-frontend
+    name: elotracker
     staticPublishPath: build
     previews:
       generation: automatic # Enable service previews

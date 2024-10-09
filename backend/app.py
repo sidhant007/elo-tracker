@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 #from flask_jwt_extended.exceptions import NoAuthorizationError
@@ -10,6 +11,9 @@ from dotenv import load_dotenv
 import os
 
 app = Flask(__name__)
+
+# Enable CORS for all routes
+CORS(app)
 
 load_dotenv('.env.dev' if os.getenv('FLASK_ENV') == 'development' else '.env.dummy')
 
