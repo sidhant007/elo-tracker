@@ -6,9 +6,14 @@ from flask_jwt_extended import JWTManager
 from routes.auth import auth_bp
 from routes.room import room_bp
 from routes.match import match_bp
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
-app.config["JWT_SECRET_KEY"] = "your_secret_key"
+
+load_dotenv('.env.dev' if os.getenv('FLASK_ENV') == 'development' else '.env.dummy')
+
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
@@ -24,4 +29,4 @@ app.register_blueprint(room_bp, url_prefix='/api/rooms')
 app.register_blueprint(match_bp, url_prefix='/api/matches')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=10000)
