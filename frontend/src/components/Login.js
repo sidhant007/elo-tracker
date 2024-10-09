@@ -6,6 +6,7 @@ import { TextField, Button, Container } from '@mui/material';
 import './Error.css';
 
 function Login() {
+  const apiBaseUrl = process.env.BACKEND_API_URL;
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
@@ -15,7 +16,7 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('/api/auth/login', { username, password });
+      const response = await axios.post(`${apiBaseUrl}/api/auth/login`, { username, password });
       localStorage.setItem('token', response.data.token);
       navigate('/rooms');
     } catch (error) {

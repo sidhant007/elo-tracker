@@ -6,6 +6,7 @@ import { TextField, Button, Container } from '@mui/material';
 import './Error.css';
 
 function CreateRoom() {
+  const apiBaseUrl = process.env.BACKEND_API_URL;
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
@@ -16,7 +17,7 @@ function CreateRoom() {
   const handleCreateRoom = async () => {
     const token = localStorage.getItem('token');
     try {
-      await axios.post('/api/rooms/create', { room_name: roomName, room_password: password }, {
+      await axios.post(`${apiBaseUrl}/api/rooms/create`, { room_name: roomName, room_password: password }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       navigate('/rooms');

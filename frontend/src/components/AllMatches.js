@@ -6,6 +6,7 @@ import { Button, Container } from '@mui/material';
 import './Error.css';
 
 function AllMatches() {
+  const apiBaseUrl = process.env.BACKEND_API_URL;
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
@@ -17,7 +18,7 @@ function AllMatches() {
     const fetchAllMatches = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await axios.get(`/api/rooms/${roomName}/all_matches`, {
+        const response = await axios.get(`${apiBaseUrl}/api/rooms/${roomName}/all_matches`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setErrorMessage('');

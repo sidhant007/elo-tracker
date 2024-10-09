@@ -6,6 +6,7 @@ import { Button, Container, ToggleButtonGroup, ToggleButton } from '@mui/materia
 import './Error.css';
 
 function RoomDetails() {
+  const apiBaseUrl = process.env.BACKEND_API_URL;
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
@@ -18,7 +19,7 @@ function RoomDetails() {
     const fetchLeaderboard = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await axios.get(`/api/rooms/${roomName}/leaderboard?type=${matchType}`, {
+        const response = await axios.get(`${apiBaseUrl}/api/rooms/${roomName}/leaderboard?type=${matchType}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setErrorMessage('');

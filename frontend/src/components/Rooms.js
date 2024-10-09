@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import './Error.css';
 
 function Rooms() {
+  const apiBaseUrl = process.env.BACKEND_API_URL;
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
@@ -17,7 +18,7 @@ function Rooms() {
     const fetchRooms = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await axios.get('/api/rooms/list', { headers: { Authorization: `Bearer ${token}` } });
+        const response = await axios.get(`${apiBaseUrl}/api/rooms/list`, { headers: { Authorization: `Bearer ${token}` } });
         setErrorMessage('');
         setShowError(false);
         setMyRooms(response.data.myRooms);

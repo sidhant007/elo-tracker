@@ -6,6 +6,7 @@ import { TextField, Button, Container } from '@mui/material';
 import './Error.css';
 
 function LeaveRoom() {
+  const apiBaseUrl = process.env.BACKEND_API_URL;
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
@@ -16,7 +17,7 @@ function LeaveRoom() {
   const handleLeaveRoom = async () => {
     const token = localStorage.getItem('token');
     try {
-      await axios.post('/api/rooms/leave', { room_name: roomName, personal_password: password }, {
+      await axios.post(`${apiBaseUrl}/api/rooms/leave`, { room_name: roomName, personal_password: password }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       navigate('/rooms');

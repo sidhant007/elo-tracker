@@ -6,6 +6,7 @@ import { TextField, Button, Container } from '@mui/material';
 import './Error.css';
 
 function Register() {
+  const apiBaseUrl = process.env.BACKEND_API_URL;
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
@@ -16,7 +17,7 @@ function Register() {
 
   const handleRegister = async () => {
     try {
-      await axios.post('/api/auth/register', { username, password });
+      await axios.post(`${apiBaseUrl}/api/auth/register`, { username, password });
       navigate('/');
     } catch (error) {
       const message = error.response?.data?.msg|| 'An error occurred!';

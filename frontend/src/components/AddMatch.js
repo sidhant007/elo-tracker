@@ -6,6 +6,7 @@ import { Button, Container, Select, MenuItem, InputLabel, FormControl, TextField
 import './Error.css';
 
 function AddMatch() {
+  const apiBaseUrl = process.env.BACKEND_API_URL;
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
@@ -24,7 +25,7 @@ function AddMatch() {
     const fetchPlayers = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await axios.get(`/api/rooms/${roomName}/leaderboard`, {
+        const response = await axios.get(`${apiBaseUrl}/api/rooms/${roomName}/leaderboard`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setErrorMessage('');
@@ -45,7 +46,7 @@ function AddMatch() {
     const score = losingPoints === '' ? null : `${gamePoints}-${losingPoints}`
     if (matchType === 'singles') {
       try {
-        await axios.post('/api/matches/add', { 
+        await axios.post('${apiBaseUrl}/api/matches/add', { 
           type: 'singles', room_name: roomName, winner_name: winnerName, loser_name: loserName, score: score
         }, {
           headers: { Authorization: `Bearer ${token}` }
@@ -58,7 +59,7 @@ function AddMatch() {
       }
     } else {
       try {
-        await axios.post('/api/matches/add', { 
+        await axios.post('${apiBaseUrl}/api/matches/add', { 
           type: 'doubles', room_name: roomName, winning_team: winningTeam, losing_team: losingTeam, score: score
         }, {
           headers: { Authorization: `Bearer ${token}` }
