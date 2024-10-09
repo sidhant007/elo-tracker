@@ -9,11 +9,9 @@ services:
     rootDir: backend
     
   - type: web
+    runtime: static
     name: react-frontend
-    env: node
-    buildCommand: "npm install && npm run build"
-    startCommand: "serve -s build"
     staticPublishPath: build
-    plan: free
-    autoDeploy: true
+    previews:
+      generation: automatic # Enable service previews
     rootDir: frontend
