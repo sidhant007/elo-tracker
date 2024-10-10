@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import generate_password_hash, check_password_hash
-from flask_jwt_extended import jwt_required, create_access_token
+from flask_jwt_extended import verify_jwt_in_request, create_access_token
 from models.user_model import create_user, find_user_by_username
 
 auth_bp = Blueprint('auth', __name__)
@@ -10,6 +10,14 @@ auth_bp = Blueprint('auth', __name__)
 def ping():
     print(f"HIT ping")
     return jsonify({"current_date": str(datetime.now())}), 200
+
+@auth_bp.route('/validate-token', methods=['GET'])
+def validate_token():
+    try:
+        verify_jwt_in_request()  # This will throw an error if the token is invalid
+        return jsonify({"msg": "Token is valid"}), 200
+    except Exception as e:
+        return jsonify({"msg": "Invalid token"}), 401
 
 @auth_bp.route('/register', methods=['POST'])
 def register_user():

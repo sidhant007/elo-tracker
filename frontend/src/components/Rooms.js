@@ -44,6 +44,11 @@ function Rooms() {
     navigate(`/join-room/${roomName}`);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  }
+
   return (
     <Container>
       <h2>My Rooms</h2>
@@ -64,6 +69,7 @@ function Rooms() {
         ))}
       </List>
       <Button variant="contained" onClick={handleCreateRoom}>Create Room</Button>
+      <Button variant="outlined" onClick={handleLogout}>Logout</Button>
       {/* Conditionally render the error popup */}
       {showError && (
         <div className="error-popup">
