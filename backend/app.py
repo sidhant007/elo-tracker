@@ -8,6 +8,7 @@ from routes.auth import auth_bp
 from routes.room import room_bp
 from routes.match import match_bp
 from dotenv import load_dotenv
+from datetime import timedelta
 import os
 
 app = Flask(__name__)
@@ -18,6 +19,7 @@ CORS(app)
 load_dotenv('.env.dev' if os.getenv('FLASK_ENV') == 'development' else '.env.dummy')
 
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=2)
 
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
