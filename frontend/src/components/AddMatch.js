@@ -46,7 +46,7 @@ function AddMatch() {
     const score = losingPoints === '' ? null : `${gamePoints}-${losingPoints}`
     if (matchType === 'singles') {
       try {
-        await axios.post('${apiBaseUrl}/api/matches/add', { 
+        await axios.post(`${apiBaseUrl}/api/matches/add`, { 
           type: 'singles', room_name: roomName, winner_name: winnerName, loser_name: loserName, score: score
         }, {
           headers: { Authorization: `Bearer ${token}` }
@@ -59,7 +59,7 @@ function AddMatch() {
       }
     } else {
       try {
-        await axios.post('${apiBaseUrl}/api/matches/add', { 
+        await axios.post(`${apiBaseUrl}/api/matches/add`, { 
           type: 'doubles', room_name: roomName, winning_team: winningTeam, losing_team: losingTeam, score: score
         }, {
           headers: { Authorization: `Bearer ${token}` }
