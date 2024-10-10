@@ -1,9 +1,15 @@
+from datetime import datetime
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_jwt_extended import jwt_required, create_access_token
 from models.user_model import create_user, find_user_by_username
 
 auth_bp = Blueprint('auth', __name__)
+
+@auth_bp.route('/ping', methods=['GET'])
+def ping():
+    print(f"HIT ping")
+    return jsonify({"current_date": str(datetime.now())}), 200
 
 @auth_bp.route('/register', methods=['POST'])
 def register_user():
