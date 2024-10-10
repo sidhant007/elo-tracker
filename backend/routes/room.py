@@ -80,7 +80,7 @@ def join_room():
 @room_bp.route('/leave', methods=['POST'])
 @jwt_required()  # Require authentication
 def leave_room():
-    print(f"HIT leave_room: {request.get_json()}")
+    print(f"HIT leave_room: {request.get_json()['room_name']}")
     current_user_id = get_jwt_identity()
     username = get_username(current_user_id)
     if not username:

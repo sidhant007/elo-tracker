@@ -21,7 +21,7 @@ def register_user():
 
 @auth_bp.route('/login', methods=['POST'])
 def login_user():
-    print(f"HIT login_user: {request.get_json()}")
+    print(f"HIT login_user: {request.get_json()['username']}")
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
