@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Container, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { Button, Container, ToggleButtonGroup, ToggleButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import './Error.css';
 
 function RoomDetails() {
@@ -54,9 +54,27 @@ function RoomDetails() {
     }
   };
 
+  const maskElo = (elo) => {
+    const eloStr = Math.round(elo).toString();
+    if (eloStr.length > 2) {
+      return eloStr.slice(0, -2) + '??';
+    }
+    return '??';
+  };
+
+  const shuffleArray = (array) => {
+    const shuffled = array.slice(); // Create a copy to shuffle
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1)); // Random index
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
+    }
+    return shuffled;
+  };
+
   return (
     <Container>
       <h2>{roomName} Leaderboard</h2>
+
       <ToggleButtonGroup
         value={matchType}
         exclusive
@@ -66,11 +84,34 @@ function RoomDetails() {
         <ToggleButton value="singles">Singles</ToggleButton>
       </ToggleButtonGroup>
 
-      <ul>
-        {leaderboard.map((player) => (
-          <li key={player.username}>{player.username}: {Math.round(player.elo)}</li>
-        ))}
-      </ul>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Username</TableCell>
+              <TableCell align="right">ELO</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {leaderboard.slice(0, Math.min(3, leaderboard.length)).map((player) => (
+              <TableRow key={player.username}>
+                <TableCell style={{ color: 'green' }}>{player.username}</TableCell>
+                <TableCell align="right">{Math.round(player.elo)}</TableCell>
+              </TableRow>
+            ))}
+            {leaderboard.length > 3 && shuffleArray(leaderboard.slice(3)).map((player) => (
+              <TableRow key={player.username}>
+                <TableCell>{player.username}</TableCell>
+                <TableCell align="right">{maskElo(player.elo)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <br />
+      Note: Only the top 3 players are shown. The rank and ELO of other players are hidden. It will be revealed on season end.
+      <br />
 
       <Button variant="contained" onClick={handleAddMatch}>Add Match</Button>
       <Button variant="contained" onClick={handleHistory}>History</Button>
