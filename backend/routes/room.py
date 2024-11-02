@@ -5,6 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_bcrypt import check_password_hash
 from models.room_model import create_new_room, add_user_to_room
 from models.user_model import find_user_by_username
+from datetime import datetime, timedelta
 import pytz
 
 def format_datetime_to_minute(dt_utc):
@@ -36,13 +37,14 @@ def create_room():
     data = request.get_json()
     room_name = data.get('room_name')
     room_password = data.get('room_password')
+    room_reset_freq = data.get('room_reset_freq')
 
     # Check if the room already exists
     if db.rooms.find_one({"name": room_name}):
         return jsonify({"msg": "Room already exists"}), 400
 
     # Create the room with the current user as the owner
-    create_new_room(room_name, room_password, username)
+    create_new_room(room_name, room_password, room_reset_freq, username)
 
     return jsonify({"msg": f"Room '{room_name}' created successfully, owned by {username}"}), 201
 
@@ -113,14 +115,39 @@ def leaderboard(room_name):
     if not room:
         return jsonify({"msg": "Room not found"}), 404
 
+    if room.get('reset_freq') is not None:
+        reset_freq = room.get('reset_freq')
+        last_reset = room.get('last_reset')
+        if (datetime.now() - last_reset).days >= reset_freq:
+            db.rooms.update_one(
+                {"_id": room["_id"]},
+                {
+                    "$set": {
+                        "snapshot_users": room.get('users', []),
+                    }
+                }
+            )
+            db.rooms.update_one(
+                {"_id": room["_id"]},
+                {
+                    "$set": {
+                        "users.$[].eloSingles": 1500,
+                        "users.$[].eloDoubles": 1500,
+                        "last_reset": datetime.now()
+                    }
+                }
+            )
+
     match_type = request.args.get('type', 'singles')  # Get the match type (default to singles)
 
     if match_type == 'singles':
         # Sort by singles ELO
         users_sorted = sorted(room.get('users', []), key=lambda x: x['eloSingles'], reverse=True)
+        snapshot_sorted = sorted(room.get('snapshot_users', []), key=lambda x: x['eloSingles'], reverse=True)
     elif match_type == 'doubles':
         # Sort by doubles ELO
         users_sorted = sorted(room.get('users', []), key=lambda x: x['eloDoubles'], reverse=True)
+        snapshot_sorted = sorted(room.get('snapshot_users', []), key=lambda x: x['eloDoubles'], reverse=True)
     else:
         return jsonify({"msg": "Invalid match type"}), 400
 
@@ -129,7 +156,17 @@ def leaderboard(room_name):
         for user in users_sorted
     ]
 
-    return jsonify({"leaderboard": leaderboard}), 200
+    snapshot_leaderboard = [
+        {"username": user["username"], "elo": user['eloSingles'] if match_type == 'singles' else user['eloDoubles']}
+        for user in snapshot_sorted
+    ]
+
+    return jsonify({
+        "leaderboard": leaderboard,
+        "snapshot_leaderboard": snapshot_leaderboard,
+        "reset_freq": room.get('reset_freq'),
+        "reset_on": format_datetime_to_minute(room.get("last_reset") + timedelta(days=room.get('reset_freq')))
+    }), 200
 
 @room_bp.route('/<room_name>/all_matches', methods=['GET'])
 @jwt_required()  # Require authentication

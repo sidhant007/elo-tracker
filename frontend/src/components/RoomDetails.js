@@ -2,16 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Container, ToggleButtonGroup, ToggleButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Button, Container, ToggleButtonGroup, ToggleButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
 import './Error.css';
 
 function RoomDetails() {
   const apiBaseUrl = process.env.REACT_APP_BASE_URL || '';
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
+  const [showSnapshot, setShowSnapshot] = useState(false);
 
   const { roomName } = useParams();
   const [leaderboard, setLeaderboard] = useState([]);
+  const [snapshotLeaderboard, setSnapshotLeaderboard] = useState([]);
+  const [resetFreq, setResetFreq] = useState(0);
+  const [resetOn, setResetOn] = useState('');
   const [matchType, setMatchType] = useState('doubles');
   const navigate = useNavigate();
 
@@ -25,6 +29,9 @@ function RoomDetails() {
         setErrorMessage('');
         setShowError(false);
         setLeaderboard(response.data.leaderboard);
+        setResetFreq(response.data.reset_freq);
+        setResetOn(response.data.reset_on);
+        setSnapshotLeaderboard(response.data.snapshot_leaderboard);
       } catch (error) {
         const message = error.response?.data?.msg || 'An error occurred!';
         setErrorMessage(message);
@@ -110,21 +117,53 @@ function RoomDetails() {
       </TableContainer>
 
       <br />
-      Note: Only the top 3 players are shown. The rank and ELO of other players are hidden. It will be revealed on season end.
+      Note: Only the top 3 players elo is shown. The ELO of other players is masked. Season ends every {resetFreq} days, this season ends on {resetOn}
       <br />
 
       <Button variant="contained" onClick={handleAddMatch}>Add Match</Button>
       <Button variant="contained" onClick={handleHistory}>History</Button>
+      <Button variant="contained" onClick={() => setShowSnapshot(!showSnapshot)}>Previous Season Leaderboard</Button>
       <Button variant="contained" onClick={handleLeaveRoom}>Leave Room</Button>
       <Button variant="outlined" onClick={() => navigate('/rooms')} fullWidth>Back to All Rooms</Button>
-      {/* Conditionally render the error popup */}
-      {showError && (
-        <div className="error-popup">
-          {errorMessage}
-        </div>
+
+      {showSnapshot && (
+        <>
+          <Typography variant="h5" component="h2">Snapshot Leaderboard</Typography>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Username</TableCell>
+                  <TableCell align="right">ELO</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {snapshotLeaderboard && snapshotLeaderboard.length > 0 ? (
+                  snapshotLeaderboard.map((player) => (
+                    <TableRow key={player.username}>
+                      <TableCell>{player.username}</TableCell>
+                      <TableCell align="right">{Math.round(player.elo)}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={2} align="center">No data available</TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </>
       )}
+
+      {/* Conditionally render the error popup */}
+    {showError && (
+        <div className="error-popup">
+        {errorMessage}
+        </div>
+    )}
     </Container>
   );
-}
+                }
 
-export default RoomDetails;
+                export default RoomDetails;

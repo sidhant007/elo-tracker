@@ -12,12 +12,13 @@ function CreateRoom() {
 
   const [roomName, setRoomName] = useState('');
   const [password, setPassword] = useState('');
+  const [resetFreq, setResetFreq] = useState(7);
   const navigate = useNavigate();
 
   const handleCreateRoom = async () => {
     const token = localStorage.getItem('token');
     try {
-      await axios.post(`${apiBaseUrl}/api/rooms/create`, { room_name: roomName, room_password: password }, {
+      await axios.post(`${apiBaseUrl}/api/rooms/create`, { room_name: roomName, room_password: password, room_reset_freq: resetFreq }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       navigate('/rooms');
@@ -46,6 +47,16 @@ function CreateRoom() {
         fullWidth 
         margin="normal"
       />
+
+      <TextField
+        label="Reset Frequency (days)"
+        type="number"
+        value={resetFreq}
+        onChange={(e) => setResetFreq(e.target.value)}
+        fullWidth
+        margin="normal"
+      />
+
       <Button variant="contained" onClick={handleCreateRoom} fullWidth>Create Room</Button>
       <Button variant="outlined" onClick={() => navigate('/rooms')} fullWidth>Back to Rooms</Button>
       {/* Conditionally render the error popup */}
